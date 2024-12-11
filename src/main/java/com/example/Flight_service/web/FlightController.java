@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -69,6 +72,21 @@ public class FlightController {
             return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/live")
+    public ResponseEntity<Map<String, Object>> getLiveFlightsFromOpenSky() {
+        String openSkyApiUrl = "https://opensky-network.org/api/states/all";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            // Fetch data from OpenSky API
+            Map<String, Object> response = restTemplate.getForObject(openSkyApiUrl, Map.class);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            // Handle errors (e.g., connectivity issues)
+            return new ResponseEntity<>(Map.of("error", "Unable to fetch flight data"), HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 }
