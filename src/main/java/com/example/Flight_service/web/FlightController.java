@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,5 +89,12 @@ public class FlightController {
             // Handle errors (e.g., connectivity issues)
             return new ResponseEntity<>(Map.of("error", "Unable to fetch flight data"), HttpStatus.SERVICE_UNAVAILABLE);
         }
+    }
+    @GetMapping("/filter")
+    public List<Flight> filterFlights(
+            @RequestParam String departure,
+            @RequestParam String destination,
+            @RequestParam String date) {
+        return flightService.filterFlights(departure, destination, date);
     }
 }
